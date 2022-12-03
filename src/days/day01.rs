@@ -1,5 +1,5 @@
 day!(Day01, Some(71506), Some(209603));
-// days!(Day01);
+// day!(Day01);
 
 impl Day01 {
   pub fn day(part: Part) -> Answer<u32> {
