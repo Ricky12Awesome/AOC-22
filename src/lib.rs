@@ -1,3 +1,5 @@
+#![feature(iter_array_chunks)]
+
 pub use std::collections::HashMap;
 pub use std::collections::HashSet;
 pub use std::fmt::Debug;
