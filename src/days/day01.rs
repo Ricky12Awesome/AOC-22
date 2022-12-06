@@ -6,7 +6,7 @@ impl Day01 {
     let lines = Self::INPUT.lines().collect_vec();
     let values = lines
       .split(|line| line.trim().is_empty())
-      .map(|group| group.iter().map(|n| n.parse::<u32>().unwrap()).sum::<u32>())
+      .map(|group| group.iter().copied().map(parse_u32).sum::<u32>())
       .sorted_unstable()
       .rev()
       .take(3)
