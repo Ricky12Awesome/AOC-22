@@ -3,21 +3,14 @@ day!(Day06, Some(1623), Some(3774));
 
 impl Day06 {
   pub fn day(part: Part) -> Answer<usize> {
-    let part1 = || {
-      4 + Self::INPUT
-        .as_bytes()
-        .windows(4)
-        .position(|bytes| bytes.iter().all_unique())
-        .unwrap()
-    };
+    let start = |window| window + Self::INPUT
+      .as_bytes()
+      .windows(window)
+      .position(|bytes| bytes.iter().all_unique())
+      .unwrap();
 
-    let part2 = || {
-      14 + Self::INPUT
-        .as_bytes()
-        .windows(14)
-        .position(|bytes| bytes.iter().all_unique())
-        .unwrap()
-    };
+    let part1 = || start(4);
+    let part2 = || start(14);
 
     answer!(part, part1, part2)
   }
