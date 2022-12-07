@@ -103,7 +103,8 @@ impl Stacks {
     let mut crates = lines
       .take_while_ref(|line| !line.starts_with(" 1"))
       .map(|line| crates_regex.replace_all(line, ""))
-      .map(|line| line.replace("    ", "  "))
+      .map(|line| line.replace("  ", " "))
+      .map(|line| line.replace("  ", " "))
       .collect_vec();
 
     crates.reverse();
