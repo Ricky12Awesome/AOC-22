@@ -18,15 +18,21 @@ struct Crates {
 }
 
 impl Crates {
+  fn new() -> Self {
+    Crates {
+      crates: Vec::with_capacity(50),
+      last: 0,
+    }
+  }
+
   fn top(&self) -> Crate {
     self.crates[self.last - 1]
   }
 
   fn free(&mut self, amount: usize) -> &mut [Crate] {
     if self.crates.len() < self.last + amount + 1 {
-      self
-        .crates
-        .extend_from_slice(&vec![Crate::default(); amount + 1]);
+      let slice = vec![Crate::default(); amount + 1];
+      self.crates.extend_from_slice(&slice);
     }
 
     &mut self.crates[self.last..][..amount]
@@ -43,6 +49,7 @@ impl Crates {
     if reverse {
       take.reverse();
     }
+
     take.swap_with_slice(free);
 
     self.last -= amount;
@@ -57,9 +64,16 @@ struct Stacks {
 }
 
 impl Stacks {
+  fn new(reverse: bool) -> Self {
+    Self {
+      stacks: Vec::with_capacity(25),
+      reverse,
+    }
+  }
+
   fn add(&mut self, stack: usize, crate_: Crate) {
     if self.stacks.len() <= stack {
-      self.stacks.push(RefCell::default())
+      self.stacks.push(RefCell::new(Crates::new()))
     }
 
     let mut stack = self.stacks[stack].borrow_mut();
@@ -75,27 +89,21 @@ impl Stacks {
     a.swap(amount, &mut b, self.reverse)
   }
 
-  fn top(&self) -> Vec<Crate> {
-    self
-      .stacks
-      .iter()
-      .map(|crate_| crate_.borrow().top())
-      .collect_vec()
+  fn top(&self) -> impl Iterator<Item = Crate> + '_ {
+    self.stacks.iter().map(|crate_| crate_.borrow().top())
   }
 
   fn parse(reverse: bool, input: &str) -> Self {
-    let mut stacks = Stacks::default();
+    let mut stacks = Stacks::new(reverse);
     let mut lines = input.lines();
 
-    stacks.reverse = reverse;
-
-    let regex = Regex::new(r"( \[|\[|]|] )").unwrap();
+    let moves_regex = Regex::new("[a-z] ?").unwrap();
+    let crates_regex = Regex::new(r"( \[|\[|]|] )").unwrap();
 
     let mut crates = lines
       .take_while_ref(|line| !line.starts_with(" 1"))
-      .map(|line| regex.replace_all(line, ""))
-      .map(|line| line.replace("  ", " "))
-      .map(|line| line.replace("  ", " "))
+      .map(|line| crates_regex.replace_all(line, ""))
+      .map(|line| line.replace("    ", "  "))
       .collect_vec();
 
     crates.reverse();
@@ -108,18 +116,18 @@ impl Stacks {
       }
     }
 
-    let regex = Regex::new("[a-z] ?").unwrap();
-
-    for line in lines
+    let moves = lines
       .filter(|line| line.starts_with("move"))
-      .map(|line| regex.replace_all(line, ""))
-    {
-      let (amount, a, b) = line
-        .split(' ')
-        .map(parse_usize)
-        .collect_tuple::<(_, _, _)>()
-        .unwrap();
+      .map(|line| moves_regex.replace_all(line, ""))
+      .map(|line| {
+        line
+          .split(' ')
+          .map(parse_usize)
+          .collect_tuple::<(_, _, _)>()
+          .unwrap()
+      });
 
+    for (amount, a, b) in moves {
       stacks.move_crates(amount, a, b);
     }
 
@@ -129,15 +137,9 @@ impl Stacks {
 
 impl Day05 {
   pub fn day(part: Part) -> Answer<String> {
-    let parse = |reverse| {
-      Stacks::parse(reverse, Self::INPUT)
-        .top()
-        .iter()
-        .collect::<String>()
-    };
-
-    let part1 = || parse(true);
-    let part2 = || parse(false);
+    let parse = |reverse| Stacks::parse(reverse, Self::INPUT);
+    let part1 = || parse(true).top().collect::<_>();
+    let part2 = || parse(false).top().collect::<_>();
 
     answer!(part, part1, part2)
   }
