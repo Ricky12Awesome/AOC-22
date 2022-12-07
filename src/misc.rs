@@ -1,3 +1,5 @@
+use std::fmt::{Display, Formatter};
+use std::time::{Duration, Instant};
 
 pub fn parse_u32(str: &str) -> u32 {
   str.parse().unwrap()
@@ -13,4 +15,22 @@ pub fn char_to_u32(c: char) -> u32 {
 
 pub fn char_to_usize(c: char) -> usize {
   c.to_digit(10).unwrap() as usize
+}
+
+pub struct Timer(Instant);
+
+impl Timer {
+  pub fn start() -> Self {
+    Timer(Instant::now())
+  }
+
+  pub fn elapsed(&self) -> Duration {
+    self.0.elapsed()
+  }
+}
+
+impl Display for Timer {
+  fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    std::fmt::Debug::fmt(&self.0.elapsed(), f)
+  }
 }

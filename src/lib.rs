@@ -1,4 +1,5 @@
 #![feature(iter_array_chunks)]
+#![feature(entry_insert)]
 
 pub use std::collections::HashMap;
 pub use std::collections::HashSet;
