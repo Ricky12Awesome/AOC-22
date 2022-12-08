@@ -13,6 +13,10 @@ pub fn char_to_u32(c: char) -> u32 {
   c.to_digit(10).unwrap()
 }
 
+pub fn char_to_u8(c: char) -> u8 {
+  c.to_digit(10).unwrap() as u8
+}
+
 pub fn char_to_usize(c: char) -> usize {
   c.to_digit(10).unwrap() as usize
 }
