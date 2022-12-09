@@ -21,6 +21,10 @@ pub fn char_to_usize(c: char) -> usize {
   c.to_digit(10).unwrap() as usize
 }
 
+pub fn char_to_isize(c: char) -> isize {
+  c.to_digit(10).unwrap() as isize
+}
+
 pub struct Timer(Instant);
 
 impl Timer {
