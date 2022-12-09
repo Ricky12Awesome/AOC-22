@@ -1,60 +1,66 @@
 use std::collections::HashSet;
-// day!(Day08, Some(0), Some(0));
-day!(Day09);
 
-impl Day09 {
-  pub fn day(part: Part) -> Answer<u32> {
-    let input = Self::INPUT
-      .lines()
-      .map(|line| (&line[..1], line[2..].parse::<isize>().unwrap()));
+use parse_display::FromStr;
 
-    let mut visited = HashSet::new();
-    let mut head = (0isize, 0isize);
-    let mut tail = (0isize, 0isize);
-    let mut previous = "R";
+day!(Day09, Some(6018), Some(2619));
+// day!(Day09);
 
-    visited.insert(tail);
+#[derive(Debug, FromStr, Copy, Clone)]
+#[display("{0} {1}")]
+struct Line(char, i32);
 
-    for (direction, distance) in input {
-      for _ in 0..distance {
-        head = match direction {
-          "R" => (head.0 + 1, head.1),
-          "L" => (head.0 - 1, head.1),
-          "U" => (head.0, head.1 + 1),
-          "D" => (head.0, head.1 - 1),
-          _ => unreachable!(),
-        };
+#[derive(Debug)]
+struct Rope<const SIZE: usize> {
+  visited: HashSet<(i32, i32)>,
+  knots: [(i32, i32); SIZE],
+}
 
-        let x_diff = (head.0 - tail.0).abs();
-        let y_diff = (head.1 - tail.1).abs();
-
-        if x_diff <= 1 && y_diff <= 1 {
-          // If the head and tail are touching, the tail doesn't move
-          continue;
-        }
-
-        if x_diff <= 2 && y_diff == 0 {
-          // If the head and tail are in the same row, the tail moves horizontally
-          tail.0 += (head.0 - tail.0) / x_diff;
-        } else if y_diff <= 2 && x_diff == 0 {
-          // If the head and tail are in the same column, the tail moves vertically
-          tail.1 += (head.1 - tail.1) / y_diff;
-        } else {
-          // Otherwise, the tail moves diagonally to keep up with the head
-          tail.0 += (head.0 - tail.0) / x_diff;
-          tail.1 += (head.1 - tail.1) / y_diff;
-        }
-
-        visited.insert(tail);
+impl<const SIZE: usize> Rope<SIZE> {
+  fn iteration(mut self, Line(direction, steps): Line) -> Self {
+    for _ in 0..steps {
+      match direction {
+        'U' => self.knots[0].1 += 1,
+        'D' => self.knots[0].1 -= 1,
+        'L' => self.knots[0].0 -= 1,
+        'R' => self.knots[0].0 += 1,
+        _ => unreachable!(),
       }
 
-      previous = direction;
+      for i in 1..self.knots.len() {
+        let target = self.knots[i - 1];
+        let follow = &mut self.knots[i];
+
+        if !((target.0 - follow.0).abs() <= 1 && (target.1 - follow.1).abs() <= 1) {
+          follow.0 += (target.0 - follow.0).signum();
+          follow.1 += (target.1 - follow.1).signum();
+        }
+      }
+
+      self.visited.insert(self.knots[self.knots.len() - 1]);
     }
 
-    println!("{}", visited.len());
+    self
+  }
 
-    let part1 = || 0;
-    let part2 = || 0;
+  fn solve(input: &str) -> usize {
+    let rope = Self {
+      visited: HashSet::from_iter([(0, 0)].into_iter()),
+      knots: [(0, 0); SIZE],
+    };
+
+    input
+      .lines()
+      .filter_map(|line| line.parse::<Line>().ok())
+      .fold(rope, Rope::iteration)
+      .visited
+      .len()
+  }
+}
+
+impl Day09 {
+  pub fn day(part: Part) -> Answer<usize> {
+    let part1 = || Rope::<2>::solve(Self::INPUT);
+    let part2 = || Rope::<10>::solve(Self::INPUT);
 
     answer!(part, part1, part2)
   }
