@@ -16,9 +16,10 @@ impl Day10 {
       .lines()
       .map(|line| line.parse::<Instruction>().unwrap());
 
-    let mut cycle = 0;
-    let mut x = 1;
+    let mut cycle = 0i32;
+    let mut x = 1i32;
     let mut strength = Vec::new();
+    let mut crt = [[' '; 40]; 6];
 
     for instruction in instructions {
       let amount = match instruction {
@@ -27,6 +28,13 @@ impl Day10 {
       };
 
       for c in 0..amount {
+        let y = cycle / 40;
+        let xx = cycle % 40;
+
+        if x.abs_diff(xx) <= 1 {
+          crt[y as usize][xx as usize] = '█';
+        }
+
         cycle += 1;
 
         if matches!(cycle, 20 | 60 | 100 | 140 | 180 | 220) {
@@ -39,6 +47,14 @@ impl Day10 {
           }
         }
       }
+    }
+
+    for y in crt {
+      for x in y {
+        print!("{x}");
+      }
+
+      println!()
     }
 
     let part1 = || strength.iter().sum::<i32>();
