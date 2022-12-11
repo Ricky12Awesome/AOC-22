@@ -1,7 +1,3 @@
-use std::collections::HashSet;
-
-use parse_display::FromStr;
-
 day!(Day09, Some(6018), Some(2619));
 // day!(Day09);
 
