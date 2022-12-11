@@ -2,10 +2,11 @@
 #![feature(entry_insert)]
 #![feature(int_roundings)]
 
-pub use std::collections::HashMap;
-pub use std::collections::HashSet;
-pub use std::fmt::Debug;
-pub use std::str::Chars;
+pub use std::{
+  collections::{HashMap, HashSet},
+  fmt::Debug,
+  str::Chars,
+};
 
 #[macro_use]
 pub mod day;
@@ -14,11 +15,10 @@ pub mod misc;
 
 #[macro_use]
 pub mod prelude {
+  pub use ::std::{cell::RefCell, collections::HashSet, fmt::Debug, ops::Index, str::FromStr};
+
   pub use ::itertools::*;
   pub use ::parse_display::FromStr;
-  pub use ::std::collections::HashSet;
-  pub use ::std::fmt::Debug;
 
-  pub use crate::day::*;
-  pub use crate::misc::*;
+  pub use crate::{day::*, misc::*};
 }

@@ -9,6 +9,10 @@ pub fn parse_u128(str: &str) -> u128 {
   str.parse().unwrap()
 }
 
+pub fn parse_u64(str: &str) -> u64 {
+  str.parse().unwrap()
+}
+
 pub fn parse_usize(str: &str) -> usize {
   str.parse().unwrap()
 }
