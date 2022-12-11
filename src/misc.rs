@@ -5,6 +5,10 @@ pub fn parse_u32(str: &str) -> u32 {
   str.parse().unwrap()
 }
 
+pub fn parse_u128(str: &str) -> u128 {
+  str.parse().unwrap()
+}
+
 pub fn parse_usize(str: &str) -> usize {
   str.parse().unwrap()
 }
