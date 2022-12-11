@@ -1,5 +1,11 @@
-day!(Day09, Some(6018), Some(2619));
-// day!(Day09);
+#[rustfmt::skip]
+day!(09, Some(6018), Some(2619), |part, input| -> usize {
+  answer!(
+    part,
+    || Rope::<2>::solve(input),
+    || Rope::<10>::solve(input)
+  )
+});
 
 #[derive(Debug, FromStr, Copy, Clone)]
 #[display("{0} {1}")]
@@ -50,14 +56,5 @@ impl<const SIZE: usize> Rope<SIZE> {
       .fold(rope, Rope::iteration)
       .visited
       .len()
-  }
-}
-
-impl Day09 {
-  pub fn day(part: Part) -> Answer<usize> {
-    let part1 = || Rope::<2>::solve(Self::INPUT);
-    let part2 = || Rope::<10>::solve(Self::INPUT);
-
-    answer!(part, part1, part2)
   }
 }

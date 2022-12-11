@@ -1,13 +1,13 @@
-use std::cell::RefCell;
-
-use regex::Regex;
-
 day!(
-  Day05,
+  05,
   Some(String::from("BWNCQRMDB")),
-  Some(String::from("NHWZCBNBF"))
+  Some(String::from("NHWZCBNBF")),
+  |part, input| -> String {
+    let parse = |reverse| Stacks::parse(reverse, input).top().collect::<_>();
+
+    answer!(part, || parse(true), || parse(false))
+  }
 );
-// day!(Day05);
 
 type Crate = char;
 
@@ -133,15 +133,5 @@ impl Stacks {
     }
 
     stacks
-  }
-}
-
-impl Day05 {
-  pub fn day(part: Part) -> Answer<String> {
-    let parse = |reverse| Stacks::parse(reverse, Self::INPUT);
-    let part1 = || parse(true).top().collect::<_>();
-    let part2 = || parse(false).top().collect::<_>();
-
-    answer!(part, part1, part2)
   }
 }

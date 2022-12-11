@@ -1,5 +1,13 @@
-// day!(Day08, Some(0), Some(0));
-day!(Day08);
+day!(08, Some(1647), Some(392080), |part, input| -> usize {
+  let grid = input
+    .lines()
+    .map(|it| it.chars().map(char_to_u8).collect_vec())
+    .collect_vec();
+
+  let (p1, p2) = visible_trees(&grid);
+
+  answer!(part, || p1, || p2)
+});
 
 #[allow(clippy::needless_range_loop)]
 fn visible_trees(grid: &Vec<Vec<u8>>) -> (usize, usize) {
@@ -51,14 +59,6 @@ fn visible_trees(grid: &Vec<Vec<u8>>) -> (usize, usize) {
 
       let score = top * left * bottom * right;
 
-      if y == 3 && x == 2 {
-        println!("{top}");
-        println!("{left}");
-        println!("{bottom}");
-        println!("{right}");
-        println!("{value} {score}");
-      }
-
       if score > highest_score {
         highest_score = score
       }
@@ -74,22 +74,4 @@ fn visible_trees(grid: &Vec<Vec<u8>>) -> (usize, usize) {
   }
 
   (visible_tree_count, highest_score)
-}
-
-impl Day08 {
-  pub fn day(part: Part) -> Answer<usize> {
-    let grid = Self::INPUT
-      .lines()
-      .map(|it| it.chars().map(char_to_u8).collect_vec())
-      .collect_vec();
-
-    println!("{grid:?}");
-
-    let (p1, p2) = visible_trees(&grid);
-
-    let part1 = || p1;
-    let part2 = || p2;
-
-    answer!(part, part1, part2)
-  }
 }

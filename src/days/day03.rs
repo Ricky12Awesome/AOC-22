@@ -1,7 +1,21 @@
-use std::collections::BTreeSet;
-
-day!(Day03, Some(8018), Some(2518));
-// day!(Day03);
+day!(03, Some(8018), Some(2518), |part, input| -> u32 {
+  answer!(
+    part,
+    || input
+      .lines()
+      .map(|line| line.split_at(line.len() / 2))
+      .map(|(a, b)| [a, b])
+      .map(item_type)
+      .map(priority)
+      .sum::<u32>(),
+    || input
+      .lines()
+      .array_chunks::<3>()
+      .map(item_type)
+      .map(priority)
+      .sum::<u32>()
+  )
+});
 
 pub fn priority(c: char) -> u32 {
   match c {
@@ -19,29 +33,4 @@ fn item_type<const N: usize>(arr: [&str; N]) -> char {
     .reduce(|a, b| a.intersection(&b).copied().collect())
     .and_then(|s| s.first().copied())
     .unwrap()
-}
-
-impl Day03 {
-  pub fn day(part: Part) -> Answer<u32> {
-    let part1 = || {
-      Self::INPUT
-        .lines()
-        .map(|line| line.split_at(line.len() / 2))
-        .map(|(a, b)| [a, b])
-        .map(item_type)
-        .map(priority)
-        .sum::<u32>()
-    };
-
-    let part2 = || {
-      Self::INPUT
-        .lines()
-        .array_chunks::<3>()
-        .map(item_type)
-        .map(priority)
-        .sum::<u32>()
-    };
-
-    answer!(part, part1, part2)
-  }
 }

@@ -1,16 +1,13 @@
-// day!(Day10, Some(0), Some(0));
-day!(Day10);
+const _TEST_P2: &str = "\
+\n████ ████ ███  ███  ███  ████ ████ ████ \
+\n█       █ █  █ █  █ █  █ █       █ █    \
+\n███    █  ███  █  █ ███  ███    █  ███  \
+\n█     █   █  █ ███  █  █ █     █   █    \
+\n█    █    █  █ █    █  █ █    █    █    \
+\n█    ████ ███  █    ███  █    ████ █    ";
 
-#[derive(Debug, FromStr, Copy, Clone)]
-#[rustfmt::skip]
-enum Instruction {
-  #[display("noop")] Noop,
-  #[display("addx {0}")] Add(i32),
-}
-
-impl Day10 {
-  pub fn day(part: Part) -> Answer<i32> {
-    let instructions = Self::INPUT
+day!(10, Some(14720), Some(String::from(_TEST_P2)), |part, input| -> i32, String {
+      let instructions = input
       .lines()
       .map(|line| line.parse::<Instruction>().unwrap());
 
@@ -23,14 +20,14 @@ impl Day10 {
       for c in 0..2 {
         let pos = cycle % 40;
 
+        if pos == 0 {
+          crt.push('\n');
+        }
+
         if x.abs_diff(pos) <= 1 {
           crt.push('█');
         } else {
           crt.push(' ');
-        }
-
-        if pos == 39 {
-          crt.push('\n');
         }
 
         cycle += 1;
@@ -47,11 +44,12 @@ impl Day10 {
       }
     }
 
-    println!("{crt}");
+    answer!(part, || strength.iter().sum::<i32>(), || crt)
+});
 
-    let part1 = || strength.iter().sum::<i32>();
-    let part2 = || 0;
-
-    answer!(part, part1, part2)
-  }
+#[derive(Debug, FromStr, Copy, Clone)]
+#[rustfmt::skip]
+enum Instruction {
+  #[display("noop")] Noop,
+  #[display("addx {0}")] Add(i32),
 }

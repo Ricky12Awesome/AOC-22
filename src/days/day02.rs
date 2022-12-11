@@ -1,5 +1,25 @@
-// day!(Day02, Some(13924), Some(209603));
-day!(Day02);
+day!(02, Some(13924), Some(209603), |part, input| -> u32 {
+  let input = input
+    .lines()
+    .map(|line| line.split_once(' ').unwrap())
+    .collect_vec();
+
+  answer!(
+    part,
+    || input
+      .iter()
+      .copied()
+      .map(Play::from)
+      .map(Play::sum)
+      .sum::<u32>(),
+    || input
+      .iter()
+      .copied()
+      .map(Play::from_p2)
+      .map(Play::sum)
+      .sum::<u32>()
+  )
+});
 
 #[repr(u32)]
 #[derive(Clone, Copy, Eq, PartialEq, Ord, PartialOrd)]
@@ -58,34 +78,5 @@ impl Play {
     };
 
     response as u32 + n
-  }
-}
-
-impl Day02 {
-  pub fn day(part: Part) -> Answer<u32> {
-    let input = Self::INPUT
-      .lines()
-      .map(|line| line.split_once(' ').unwrap())
-      .collect_vec();
-
-    let part1 = || {
-      input
-        .iter()
-        .copied()
-        .map(Play::from)
-        .map(Play::sum)
-        .sum::<u32>()
-    };
-
-    let part2 = || {
-      input
-        .iter()
-        .copied()
-        .map(Play::from_p2)
-        .map(Play::sum)
-        .sum::<u32>()
-    };
-
-    answer!(part, part1, part2)
   }
 }

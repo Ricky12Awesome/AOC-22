@@ -1,20 +1,13 @@
-day!(Day01, Some(71506), Some(209603));
-// day!(Day01);
+day!(01, Some(71506), Some(209603), |part, input| -> u32 {
+  let lines = input.lines().collect_vec();
 
-impl Day01 {
-  pub fn day(part: Part) -> Answer<u32> {
-    let lines = Self::INPUT.lines().collect_vec();
-    let values = lines
-      .split(|line| line.trim().is_empty())
-      .map(|group| group.iter().copied().map(parse_u32).sum::<u32>())
-      .sorted_unstable()
-      .rev()
-      .take(3)
-      .collect_vec();
+  let values = lines
+    .split(|line| line.trim().is_empty())
+    .map(|group| group.iter().copied().map(parse_u32).sum::<u32>())
+    .sorted_unstable()
+    .rev()
+    .take(3)
+    .collect_vec();
 
-    let part1 = || values[0];
-    let part2 = || values.iter().sum::<u32>();
-
-    answer!(part, part1, part2)
-  }
-}
+  answer!(part, || values[0], || values.iter().sum::<u32>())
+});

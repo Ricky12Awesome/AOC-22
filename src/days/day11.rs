@@ -1,5 +1,9 @@
-day!(Day11, Some(111210), Some(15447387620));
-// day!(Day11);
+day!(11, Some(111210), Some(15447387620), |part, input| -> u64 {
+  let part1 = || _solve::<20>(input, false);
+  let part2 = || _solve::<10000>(input, true);
+
+  answer!(part, part1, part2)
+});
 
 #[derive(Debug)]
 struct Monkey {
@@ -77,7 +81,7 @@ impl Monkey {
   }
 }
 
-fn solve<const ROUNDS: usize>(input: &str, by_product: bool) -> u64 {
+fn _solve<const ROUNDS: usize>(input: &str, by_product: bool) -> u64 {
   let monkeys = input
     .split("Monkey ")
     .filter(|s| !s.is_empty())
@@ -109,13 +113,4 @@ fn solve<const ROUNDS: usize>(input: &str, by_product: bool) -> u64 {
     .rev()
     .take(2)
     .product()
-}
-
-impl Day11 {
-  pub fn day(part: Part) -> Answer<u64> {
-    let part1 = || solve::<20>(Self::INPUT, false);
-    let part2 = || solve::<10000>(Self::INPUT, true);
-
-    answer!(part, part1, part2)
-  }
 }
