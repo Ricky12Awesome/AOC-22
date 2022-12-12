@@ -1,13 +1,13 @@
-day!(12, None, None, |part, input| -> u64 {
-  _solve(input);
+day!(12, None, None, |part, input| -> usize {
+  let value = _solve(input, true);
 
-  answer!(part, || 0, || 0)
+  answer!(part, || value, || 0)
 });
 
-fn _solve(input: &str) {
+fn _solve(input: &str, start_anywhere: bool) -> usize {
   let height_map = input.lines().map(|line| line.chars());
   let mut map = HashMap::new();
-  let mut starting = (0, 0);
+  let mut start = Vec::new();
   let mut end = (0, 0);
 
   for (y, row) in height_map.enumerate() {
@@ -16,7 +16,11 @@ fn _solve(input: &str) {
 
       let value = match height {
         'S' => {
-          starting = (x, y);
+          start.push((x, y));
+          b'a'
+        }
+        'a' if start_anywhere => {
+          start.push((x, y));
           b'a'
         }
         'E' => {
@@ -30,8 +34,17 @@ fn _solve(input: &str) {
     }
   }
 
-  let result = pathfinding::directed::bfs::bfs(
-    &starting,
+  start
+    .into_iter()
+    .map(|start| find_shortest(&map, start, end))
+    .filter(|&it| it > 0)
+    .min()
+    .unwrap()
+}
+
+fn find_shortest(map: &HashMap<(i32, i32), i64>, start: (i32, i32), end: (i32, i32)) -> usize {
+  pathfinding::directed::bfs::bfs(
+    &start,
     |&(x, y)| {
       [(x, y + 1), (x, y - 1), (x - 1, y), (x + 1, y)]
         .into_iter()
@@ -42,11 +55,9 @@ fn _solve(input: &str) {
         .into_iter()
     },
     |&(x, y)| (x, y) == end,
-  );
-
-  dbg!(&starting);
-  dbg!(&end);
-  dbg!(&result);
-
-  println!("{}", result.as_ref().map(Vec::<_>::len).unwrap_or(0));
+  )
+  .as_ref()
+  .map(Vec::len)
+  .unwrap_or(1)
+    - 1
 }
