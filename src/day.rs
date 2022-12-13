@@ -1,3 +1,4 @@
+use std::fmt::{Display, Formatter};
 use std::str::FromStr;
 use clap::Parser;
 
@@ -117,6 +118,16 @@ impl FromStr for Part {
   }
 }
 
+impl Display for Part {
+  fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    match self {
+      Self::One => write!(f, "1"),
+      Self::Two => write!(f, "2"),
+      Self::Both => write!(f, "Both"),
+    }
+  }
+}
+
 pub type Answer<P1, P2 = P1> = (Option<P1>, Option<P2>);
 
 #[derive(Debug, Parser)]
@@ -126,4 +137,13 @@ pub struct DayArgs {
 
   #[clap(long, short)]
   pub input: Option<String>,
+
+  #[clap(long, short)]
+  pub benchmark: bool,
+
+  #[clap(long, short)]
+  pub warmup: bool,
+
+  #[clap(long, short)]
+  pub time: Option<u64>
 }
