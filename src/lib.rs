@@ -26,6 +26,7 @@ pub mod prelude {
   pub use ::itertools::*;
   pub use ::parse_display::FromStr;
   pub use ::regex::Regex;
+  pub use ::serde::{Deserialize, Serialize};
 
   pub use crate::{day::*, misc::*};
 }
