@@ -9,5 +9,5 @@ day!(01, Some(71506), Some(209603), |part, input| -> u32 {
     .take(3)
     .collect_vec();
 
-  answer!(part, || values[0], || values.iter().sum::<u32>())
+  answer!(part, values[0], values.iter().sum::<u32>())
 });

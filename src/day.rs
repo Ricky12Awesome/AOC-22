@@ -8,9 +8,9 @@ macro_rules! answer {
   };
   ($part:expr, $p1:expr, $p2:expr) => {
     match $part {
-      Part::One => (answer!($p1()), None),
-      Part::Two => (None, answer!($p2())),
-      Part::Both => (answer!($p1()), answer!($p2())),
+      Part::One => (answer!($p1), None),
+      Part::Two => (None, answer!($p2)),
+      Part::Both => (answer!($p1), answer!($p2)),
     }
   };
 }
@@ -32,7 +32,7 @@ macro_rules! day {
     #[allow(unused)]
     pub const INPUT: &'static str = include_str!(input_path!($name));
 
-    generate_tests_for_day!($p1, $p2);
+    // generate_tests_for_day!($p1, $p2);
   };
 }
 

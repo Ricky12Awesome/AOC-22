@@ -1,14 +1,14 @@
 day!(03, Some(8018), Some(2518), |part, input| -> u32 {
   answer!(
     part,
-    || input
+    input
       .lines()
       .map(|line| line.split_at(line.len() / 2))
       .map(|(a, b)| [a, b])
       .map(item_type)
       .map(priority)
       .sum::<u32>(),
-    || input
+    input
       .lines()
       .array_chunks::<3>()
       .map(item_type)

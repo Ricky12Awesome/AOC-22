@@ -6,7 +6,7 @@ day!(08, Some(1647), Some(392080), |part, input| -> usize {
 
   let (p1, p2) = visible_trees(&grid);
 
-  answer!(part, || p1, || p2)
+  answer!(part, p1, p2)
 });
 
 #[allow(clippy::needless_range_loop)]

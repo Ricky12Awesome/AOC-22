@@ -1,8 +1,9 @@
 day!(11, Some(111210), Some(15447387620), |part, input| -> u64 {
-  let part1 = || _solve::<20>(input, false);
-  let part2 = || _solve::<10000>(input, true);
-
-  answer!(part, part1, part2)
+  answer!(
+    part,
+    _solve::<20>(input, false),
+    _solve::<10000>(input, true)
+  )
 });
 
 #[derive(Debug)]

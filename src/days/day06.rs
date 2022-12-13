@@ -8,5 +8,5 @@ day!(06, Some(1623), Some(3774), |part, input| -> usize {
       + window
   };
 
-  answer!(part, || start(4), || start(14))
+  answer!(part, start(4), start(14))
 });

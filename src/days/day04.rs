@@ -1,5 +1,5 @@
 day!(04, None, None, |part, _input| -> u32 {
-  answer!(part, || 0, || 0)
+  answer!(part, 0, 0)
 });
 
 // impl Day04 {

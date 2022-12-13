@@ -6,13 +6,13 @@ day!(02, Some(13924), Some(209603), |part, input| -> u32 {
 
   answer!(
     part,
-    || input
+    input
       .iter()
       .copied()
       .map(Play::from)
       .map(Play::sum)
       .sum::<u32>(),
-    || input
+    input
       .iter()
       .copied()
       .map(Play::from_p2)

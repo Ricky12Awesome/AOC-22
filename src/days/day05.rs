@@ -5,7 +5,7 @@ day!(
   |part, input| -> String {
     let parse = |reverse| Stacks::parse(reverse, input).top().collect::<_>();
 
-    answer!(part, || parse(true), || parse(false))
+    answer!(part, parse(true), parse(false))
   }
 );
 

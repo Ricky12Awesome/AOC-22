@@ -46,7 +46,7 @@ day!(07, Some(1749646), Some(1498966), |part, input| -> usize {
   let part1 = || dirs.iter().filter(|size| **size < 100_000).sum::<usize>();
   let part2 = || *dirs.iter().filter(|size| **size >= limit).min().unwrap();
 
-  answer!(part, part1, part2)
+  answer!(part, part1(), part2())
 });
 
 #[derive(Debug, Clone)]

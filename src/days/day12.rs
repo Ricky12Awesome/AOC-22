@@ -1,6 +1,5 @@
-#[rustfmt::skip]
 day!(12, Some(394), Some(388), |part, input| -> usize {
-  answer!(part, || Day::solve(input, false), || Day::solve(input, true))
+  answer!(part, Day::solve(input, false), Day::solve(input, true))
 });
 
 #[derive(Debug, Default)]

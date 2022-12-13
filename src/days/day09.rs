@@ -2,8 +2,8 @@
 day!(09, Some(6018), Some(2619), |part, input| -> usize {
   answer!(
     part,
-    || Rope::<2>::solve(input),
-    || Rope::<10>::solve(input)
+    Rope::<2>::solve(input),
+    Rope::<10>::solve(input)
   )
 });
 

@@ -1,3 +1,3 @@
 day!(15, None, None, |part, _input| -> u64 {
-  answer!(part, || 0, || 0)
+  answer!(part, 0, 0)
 });
