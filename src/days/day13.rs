@@ -12,13 +12,6 @@ enum Value {
 }
 
 impl Value {
-  fn list(self) -> Vec<Value> {
-    match self {
-      Value::List(list) => list,
-      _ => panic!("Value must be a list"),
-    }
-  }
-
   fn compare_n(left: i32, right: i32) -> Ordering {
     left.cmp(&right)
   }
