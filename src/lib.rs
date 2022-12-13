@@ -1,6 +1,7 @@
 #![feature(iter_array_chunks)]
 #![feature(entry_insert)]
 #![feature(int_roundings)]
+#![feature(exact_size_is_empty)]
 
 pub use std::{
   collections::{HashMap, HashSet},
