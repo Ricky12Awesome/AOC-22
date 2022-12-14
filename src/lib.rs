@@ -2,6 +2,7 @@
 #![feature(entry_insert)]
 #![feature(int_roundings)]
 #![feature(exact_size_is_empty)]
+#![feature(array_windows)]
 
 pub use std::{
   collections::{HashMap, HashSet},

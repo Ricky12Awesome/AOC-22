@@ -72,8 +72,7 @@ fn part2(input: &str) -> usize {
     .map(serde_json::from_str::<Value>)
     .map(Result::<_, _>::unwrap)
     .interleave([first.clone(), second.clone()])
-    .sorted_by(Value::compare)
-    .inspect(|val| println!("{val:?}"));
+    .sorted_by(Value::compare);
 
   let (first, _) = list.find_position(|it| *it == first).unwrap();
   let (second, _) = list.find_position(|it| *it == second).unwrap();
