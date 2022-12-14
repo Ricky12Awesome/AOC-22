@@ -1,9 +1,13 @@
 use parse_display::Display;
 day!(14, Some(793), None, |part, input| -> u64 {
-  answer!(part, _solve(input), 0)
+  answer!(part, _solve(input, false), 1 + _solve(input, true))
 });
 
-fn draw((x1, y1): (usize, usize), (x2, y2): (usize, usize), f: impl FnMut((usize, usize))) {
+fn iteration_positions(
+  (x1, y1): (usize, usize),
+  (x2, y2): (usize, usize),
+  f: impl FnMut((usize, usize)),
+) {
   let min_x = x1.min(x2);
   let min_y = y1.min(y2);
   let delta_x = x1.max(x2) - min_x;
@@ -50,7 +54,7 @@ fn draw_grid(grid: &Grid) {
   }
 }
 
-fn drop_sand(grid: &mut Grid) -> Option<()> {
+fn drop_sand(grid: &mut Grid, floor: bool) -> Option<()> {
   let mut location = (500, 0);
 
   loop {
@@ -63,12 +67,16 @@ fn drop_sand(grid: &mut Grid) -> Option<()> {
     location = new_location;
   }
 
+  if floor && location == (500, 0) {
+    return None;
+  }
+
   grid[location.1][location.0] = Point::Sand;
 
   Some(())
 }
 
-fn _solve(input: &str) -> u64 {
+fn _solve(input: &str, floor: bool) -> u64 {
   let rocks = input.lines().map(|line| {
     line
       .split(" -> ")
@@ -76,21 +84,30 @@ fn _solve(input: &str) -> u64 {
       .map(|(x, y)| (x.parse::<usize>().unwrap(), y.parse::<usize>().unwrap()))
   });
 
-  let mut grid: Grid = vec![vec![Point::Air; 5000]; 200];
+  let mut grid: Grid = vec![vec![Point::Air; 2000]; 200];
+  let mut highest = 0;
 
   for points in rocks {
     points.tuple_windows::<(_, _)>().for_each(|(a, b)| {
-      draw(a, b, |(x, y)| grid[y][x] = Point::Rock);
+      iteration_positions(a, b, |(x, y)| {
+        if y > highest {
+          highest = y;
+        }
+
+        grid[y][x] = Point::Rock
+      });
     });
+  }
+
+  if floor {
+    grid[highest + 2] = vec![Point::Rock; 2000];
   }
 
   let mut counter = 0;
 
-  while drop_sand(&mut grid).is_some() {
+  while drop_sand(&mut grid, floor).is_some() {
     counter += 1;
   }
-
-  draw_grid(&grid);
 
   counter
 }
