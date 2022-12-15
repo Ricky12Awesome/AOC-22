@@ -1,5 +1,4 @@
-use parse_display::Display;
-day!(14, Some(793), None, |part, input| -> u64 {
+day!(14, Some(793), Some(24166), |part, input| -> u64 {
   answer!(part, _solve(input, false), 1 + _solve(input, true))
 });
 
