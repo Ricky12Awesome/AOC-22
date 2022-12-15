@@ -44,15 +44,6 @@ fn new_location((x, y): (usize, usize), grid: &Grid) -> Option<(usize, usize)> {
   })
 }
 
-fn draw_grid(grid: &Grid) {
-  for y in 0..11 {
-    for x in 494..504 {
-      print!("{}", grid[y][x])
-    }
-    println!()
-  }
-}
-
 fn drop_sand(grid: &mut Grid, floor: bool) -> Option<()> {
   let mut location = (500, 0);
 
