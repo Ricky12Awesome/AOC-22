@@ -1,109 +1,75 @@
-use arrayvec::ArrayVec;
-use std::sync::atomic::{AtomicBool, AtomicI64, Ordering};
+// x=3135800, y=2766584
 day!(15, Some(5607466), Some(12543202766584), |part, input| -> usize, i64 {
   answer!(part, part1(input), part2(input))
 });
 
-#[derive(Debug, Display, FromStr, Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
-#[display("x={x}, y={y}")]
-struct Pos {
-  x: i64,
-  y: i64,
-}
-
-impl Pos {
-  fn new(x: i64, y: i64) -> Self {
-    Self { x, y }
-  }
-
-  fn radius(&self, other: &Self) -> i64 {
-    (self.x - other.x).abs() + (self.y - other.y).abs()
-  }
-
-  fn within(&self, radius: i64, point: &Self) -> bool {
-    self.radius(point) <= radius
-  }
-}
-
 #[derive(Debug, Display, FromStr)]
-#[display("Sensor at {sensor}: closest beacon is at {beacon}")]
+#[display("Sensor at x={sensor_x}, y={sensor_y}: closest beacon is at x={beacon_x}, y={beacon_y}")]
 struct Line {
-  sensor: Pos,
-  beacon: Pos,
+  sensor_x: i64,
+  sensor_y: i64,
+  beacon_x: i64,
+  beacon_y: i64,
 }
 
-fn parse(input: &str) -> Vec<(Pos, Pos, i64)> {
+struct Sensor {
+  pos: (i64, i64),
+  closest: (i64, i64),
+  distance: i64,
+}
+
+impl Sensor {
+  fn new(line: Line) -> Self {
+    Self {
+      pos: (line.sensor_x, line.sensor_y),
+      closest: (line.beacon_x, line.sensor_y),
+      distance: (line.sensor_x - line.beacon_x).abs() + (line.sensor_y - line.beacon_y).abs(),
+    }
+  }
+
+  fn within(&self, pos: (i64, i64)) -> bool {
+    if self.closest == pos {
+      return false;
+    }
+
+    (self.pos.0 - pos.0).abs() + (self.pos.1 - pos.1).abs() <= self.distance
+  }
+}
+
+fn parse(input: &str) -> Vec<Sensor> {
   input
     .lines()
     .map(str::parse::<Line>)
     .map(Result::unwrap)
-    .map(|Line { sensor, beacon }| (sensor, beacon, sensor.radius(&beacon)))
+    .map(Sensor::new)
     .collect_vec()
 }
 
 fn part1(input: &str) -> usize {
-  let positions = parse(input);
+  let input = parse(input);
 
-  (-5_000_000..5_000_000)
-    .map(|x| Pos::new(x, 2000000))
-    .filter(|current| {
-      positions
-        .iter()
-        .filter(|(_, beacon, _)| beacon != current)
-        .any(|(pos, _, radius)| current.within(*radius, pos))
-    })
+  let l_bound = input.iter().map(|s| s.pos.0 - s.distance).min().unwrap();
+  let r_bound = input.iter().map(|s| s.pos.0 + s.distance).max().unwrap();
+
+  (l_bound..=r_bound)
+    .filter(|&x| input.iter().any(|s| s.within((x, 2000000))))
     .count()
 }
 
 fn part2(input: &str) -> i64 {
-  let positions = parse(input);
-  let finished = AtomicBool::new(false);
-  let value = AtomicI64::new(0);
-  let positions = ArrayVec::<_, 50>::from_iter(positions);
+  let input = parse(input);
 
-  std::thread::scope(|s| {
-    let size = 4_000_000;
-    // let size = 20;
-
-    let thread_count = 16;
-    let size_per_thread = size / thread_count;
-    let mut threads = Vec::new();
-
-    println!("{size_per_thread}");
-
-    for i in 1..=thread_count {
-      let previous = size_per_thread * (i - 1);
-      let current = size_per_thread * i;
-
-      let (positions, finished, value) = (&positions, &finished, &value);
-
-      threads.push(s.spawn(move || {
-        let area =
-          (previous..=current).flat_map(|y| (0..=size).map(move |x| Pos::new(x, y)));
-
-        for current in area {
-          if finished.load(Ordering::SeqCst) {
-            break
-          }
-
-          let check = positions
+  input
+    .iter()
+    .find_map(|s| {
+      ((s.pos.0 - s.distance - 1).max(0)..=s.pos.0.min(4000000))
+        .zip(s.pos.1..=4000000)
+        .find_map(|p| {
+          input
             .iter()
-            .any(|(pos, _, radius)| current.within(*radius, pos));
-
-          if !check {
-            println!("{current}");
-            finished.store(true, Ordering::SeqCst);
-            value.store((current.x * 4_000_000) + current.y, Ordering::SeqCst);
-            break
-          }
-        }
-      }));
-    }
-
-    for thread in threads {
-      thread.join().unwrap();
-    }
-
-    value.load(Ordering::Acquire)
-  })
+            .all(|s| !s.within(p))
+            .then_some(p.0 * 4000000 + p.1)
+        })
+    })
+    .unwrap()
 }
