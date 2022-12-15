@@ -25,6 +25,7 @@ pub mod prelude {
     str::FromStr,
   };
 
+  pub use ::rayon::prelude::*;
   pub use ::itertools::*;
   pub use ::parse_display::{FromStr, Display};
   pub use ::regex::Regex;

@@ -1,21 +1,23 @@
 // x=3135800, y=2766584
-day!(15, Some(5607466), Some(12543202766584), |part, input| -> usize, i64 {
-  answer!(part, part1(input), part2(input))
+#[rustfmt::skip]
+day!(15, Some(5_607_466), Some(12_543_202_766_584), |part, input| -> usize {
+  let input = parse(input);
+  answer!(part, part1(&input, 2_000_000) - 1, part2(&input, 4_000_000))
 });
 
 #[derive(Debug, Display, FromStr)]
 #[display("Sensor at x={sensor_x}, y={sensor_y}: closest beacon is at x={beacon_x}, y={beacon_y}")]
 struct Line {
-  sensor_x: i64,
-  sensor_y: i64,
-  beacon_x: i64,
-  beacon_y: i64,
+  sensor_x: isize,
+  sensor_y: isize,
+  beacon_x: isize,
+  beacon_y: isize,
 }
 
 struct Sensor {
-  pos: (i64, i64),
-  closest: (i64, i64),
-  distance: i64,
+  pos: (isize, isize),
+  closest: (isize, isize),
+  distance: isize,
 }
 
 impl Sensor {
@@ -27,7 +29,7 @@ impl Sensor {
     }
   }
 
-  fn within(&self, pos: (i64, i64)) -> bool {
+  fn within(&self, pos: (isize, isize)) -> bool {
     if self.closest == pos {
       return false;
     }
@@ -45,30 +47,28 @@ fn parse(input: &str) -> Vec<Sensor> {
     .collect_vec()
 }
 
-fn part1(input: &str) -> usize {
-  let input = parse(input);
-
+fn part1(input: &[Sensor], n: isize) -> usize {
   let l_bound = input.iter().map(|s| s.pos.0 - s.distance).min().unwrap();
   let r_bound = input.iter().map(|s| s.pos.0 + s.distance).max().unwrap();
 
   (l_bound..=r_bound)
-    .filter(|&x| input.iter().any(|s| s.within((x, 2000000))))
+    .into_par_iter()
+    .filter(|&x| input.iter().any(|s| s.within((x, n))))
     .count()
 }
 
-fn part2(input: &str) -> i64 {
-  let input = parse(input);
-
+fn part2(input: &[Sensor], n: usize) -> usize {
   input
     .iter()
     .find_map(|s| {
-      ((s.pos.0 - s.distance - 1).max(0)..=s.pos.0.min(4000000))
-        .zip(s.pos.1..=4000000)
-        .find_map(|p| {
+      ((s.pos.0 - s.distance - 1).max(0) as _..(s.pos.0 as usize).min(n + 1))
+        .into_par_iter()
+        .zip(s.pos.1 as _..n + 1)
+        .find_map_first(|p| {
           input
             .iter()
-            .all(|s| !s.within(p))
-            .then_some(p.0 * 4000000 + p.1)
+            .all(|s| !s.within((p.0 as _, p.1 as _)))
+            .then_some(p.0 * 4_000_000 + p.1)
         })
     })
     .unwrap()
