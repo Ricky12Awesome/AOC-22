@@ -15,10 +15,12 @@ struct AnyDayArgs {
 macro_rules! for_day {
   ($day:ident, $args:expr) => {{
     let part = $args.args.part.unwrap_or_default();
-    let input = $args
-      .args
-      .input
-      .unwrap_or(advent_of_code_2022::days::$day::INPUT.to_string());
+    // let input = $args
+    //   .args
+    //   .input
+    //   .unwrap_or(advent_of_code_2022::days::$day::INPUT.to_string());
+
+    let input = advent_of_code_2022::days::$day::INPUT;
 
     if $args.args.benchmark {
       let time = $args.args.time.unwrap_or(5000);
