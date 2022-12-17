@@ -3,6 +3,7 @@
 #![feature(int_roundings)]
 #![feature(exact_size_is_empty)]
 #![feature(array_windows)]
+#![feature(slice_take)]
 
 pub use std::{
   collections::{HashMap, HashSet},
