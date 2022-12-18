@@ -1,9 +1,12 @@
+#![allow(incomplete_features)]
 #![feature(iter_array_chunks)]
 #![feature(entry_insert)]
 #![feature(int_roundings)]
 #![feature(exact_size_is_empty)]
 #![feature(array_windows)]
 #![feature(slice_take)]
+#![feature(generic_const_exprs)]
+#![feature(build_hasher_simple_hash_one)]
 
 pub use std::{
   collections::{HashMap, HashSet},

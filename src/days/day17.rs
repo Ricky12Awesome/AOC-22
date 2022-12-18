@@ -1,5 +1,7 @@
+#![allow(unused)]
+use indexmap::IndexMap;
 day!(17, Some(3114), None, |part, input| -> isize {
-  answer!(part, part1(input), 0)
+  answer!(part, part1(input), part2(input))
 });
 
 const LEFT: u8 = b'<';
@@ -7,7 +9,7 @@ const RIGHT: u8 = b'>';
 
 type Pos = (isize, isize);
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash)]
 struct Rock<'a> {
   id: u8,
   positions: &'a [Pos],
@@ -28,7 +30,7 @@ impl<'a> Rock<'a> {
 
 #[derive(Debug)]
 struct Tower<'a> {
-  placed: [[u8; 7]; 384],
+  placed: [[u8; 7]; 512],
   patterns: &'a [u8],
   pattern_index: usize,
   height: isize,
@@ -38,7 +40,7 @@ struct Tower<'a> {
 impl<'a> Tower<'a> {
   fn from(patterns: &'a [u8]) -> Self {
     Self {
-      placed: [[0; 7]; 384],
+      placed: [[0; 7]; 512],
       patterns,
       pattern_index: 0,
       height: 0,
@@ -49,14 +51,14 @@ impl<'a> Tower<'a> {
   fn get_y(&mut self, y: isize) -> usize {
     let y = y - self.offset_y;
 
-    if y >= 256 {
-      self.placed[..128].swap_with_slice(&mut [[0; 7]; 128]);
+    if y >= 500 {
+      self.placed[..250].swap_with_slice(&mut [[0; 7]; 250]);
 
-      let (left, right) = self.placed[..256].split_at_mut(128);
+      let (left, right) = self.placed[..500].split_at_mut(250);
 
       left.swap_with_slice(right);
 
-      self.offset_y += 128;
+      self.offset_y += 250;
     }
 
     y as usize
@@ -78,13 +80,6 @@ impl<'a> Tower<'a> {
     pos.0 >= 7 || pos.0 < 0 || self.collides(pos)
   }
 
-  fn get_direction(&mut self) -> u8 {
-    let value = self.patterns[self.pattern_index];
-    self.pattern_index += 1;
-    self.pattern_index %= self.patterns.len();
-    value
-  }
-
   fn can_move(&mut self, rock: &Rock, pos: Pos) -> bool {
     rock
       .positions(pos)
@@ -103,13 +98,15 @@ impl<'a> Tower<'a> {
     let mut y = spawn_y;
 
     loop {
-      let direction = self.get_direction();
+      let direction = self.patterns[self.pattern_index % self.patterns.len()];
 
       let offset_x = match direction {
         LEFT => -1,
         RIGHT => 1,
         _ => unreachable!(),
       };
+
+      self.pattern_index += 1;
 
       if self.can_move(rock, (x + offset_x, y)) {
         x += offset_x;
@@ -142,13 +139,46 @@ const ROCKS: [Rock; 5] = [
 
 fn part1(input: &str) -> isize {
   let patterns = input.as_bytes();
-  let mut tower = Tower::from(&patterns);
+  let mut tower = Tower::from(patterns);
 
-  // 1_000_000_000_000
   for i in 0..2022 {
     let rock = &ROCKS[i % ROCKS.len()];
 
     tower.place(rock);
+  }
+
+  tower.height
+}
+
+fn part2(input: &str) -> isize {
+  let patterns = input.as_bytes();
+  let mut tower = Tower::from(patterns);
+
+  let mut snapshots = IndexMap::new();
+
+  for i in 0..1000000000000 {
+    let id = (tower.pattern_index % patterns.len(), i % ROCKS.len());
+
+    if let Some(&height) = snapshots.get(&id) {
+      snapshots.remove(&id);
+      let h = snapshots.values().sum::<isize>();
+
+      let i = i as isize;
+      println!("{i}");
+      println!("{}", tower.height);
+      // 1514285714288
+
+      println!("1000000000000");
+      println!("1514285714288");
+      println!("{}",(1000000000000 / i) * height);
+      println!("{}", 1000000000000 * height);
+      break;
+    } else {
+      snapshots.insert(id, tower.height);
+    }
+
+    tower.place(&ROCKS[i % ROCKS.len()]);
+
   }
 
   tower.height
