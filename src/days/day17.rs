@@ -151,35 +151,36 @@ fn part1(input: &str) -> isize {
 }
 
 fn part2(input: &str) -> isize {
-  let patterns = input.as_bytes();
-  let mut tower = Tower::from(patterns);
-
-  let mut snapshots = IndexMap::new();
-
-  for i in 0..1000000000000 {
-    let id = (tower.pattern_index % patterns.len(), i % ROCKS.len());
-
-    if let Some(&height) = snapshots.get(&id) {
-      snapshots.remove(&id);
-      let h = snapshots.values().sum::<isize>();
-
-      let i = i as isize;
-      println!("{i}");
-      println!("{}", tower.height);
-      // 1514285714288
-
-      println!("1000000000000");
-      println!("1514285714288");
-      println!("{}",(1000000000000 / i) * height);
-      println!("{}", 1000000000000 * height);
-      break;
-    } else {
-      snapshots.insert(id, tower.height);
-    }
-
-    tower.place(&ROCKS[i % ROCKS.len()]);
-
-  }
-
-  tower.height
+  // let patterns = input.as_bytes();
+  // let mut tower = Tower::from(patterns);
+  //
+  // let mut snapshots = IndexMap::new();
+  //
+  // for i in 0..1000000000000 {
+  //   let id = (tower.pattern_index % patterns.len(), i % ROCKS.len());
+  //
+  //   if let Some(&height) = snapshots.get(&id) {
+  //     snapshots.remove(&id);
+  //     let h = snapshots.values().sum::<isize>();
+  //
+  //     let i = i as isize;
+  //     println!("{i}");
+  //     println!("{}", tower.height);
+  //     // 1514285714288
+  //
+  //     println!("1000000000000");
+  //     println!("1514285714288");
+  //     println!("{}",(1000000000000 / i) * height);
+  //     println!("{}", 1000000000000 * height);
+  //     break;
+  //   } else {
+  //     snapshots.insert(id, tower.height);
+  //   }
+  //
+  //   tower.place(&ROCKS[i % ROCKS.len()]);
+  //
+  // }
+  //
+  // tower.height
+  0
 }
