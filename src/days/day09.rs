@@ -7,10 +7,6 @@ day!(09, Some(6018), Some(2619), |part, input| -> usize {
   )
 });
 
-#[derive(Debug, FromStr, Copy, Clone)]
-#[display("{0} {1}")]
-struct Line(char, i32);
-
 #[derive(Debug)]
 struct Rope<const SIZE: usize> {
   visited: HashSet<(i32, i32)>,
@@ -18,13 +14,13 @@ struct Rope<const SIZE: usize> {
 }
 
 impl<const SIZE: usize> Rope<SIZE> {
-  fn iteration(mut self, Line(direction, steps): Line) -> Self {
+  fn iteration(mut self, (direction, steps): (&str, i32)) -> Self {
     for _ in 0..steps {
       match direction {
-        'U' => self.knots[0].1 += 1,
-        'D' => self.knots[0].1 -= 1,
-        'L' => self.knots[0].0 -= 1,
-        'R' => self.knots[0].0 += 1,
+        "U" => self.knots[0].1 += 1,
+        "D" => self.knots[0].1 -= 1,
+        "L" => self.knots[0].0 -= 1,
+        "R" => self.knots[0].0 += 1,
         _ => unreachable!(),
       }
 
@@ -46,13 +42,13 @@ impl<const SIZE: usize> Rope<SIZE> {
 
   fn solve(input: &str) -> usize {
     let rope = Self {
-      visited: HashSet::from_iter([(0, 0)].into_iter()),
+      visited: HashSet::with_capacity(10000),
       knots: [(0, 0); SIZE],
     };
 
     input
       .lines()
-      .filter_map(|line| line.parse::<Line>().ok())
+      .map(|line| (&line[..1], line[2..].parse::<i32>().unwrap()))
       .fold(rope, Rope::iteration)
       .visited
       .len()
