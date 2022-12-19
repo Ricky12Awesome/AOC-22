@@ -29,6 +29,8 @@ pub mod prelude {
     str::FromStr,
   };
 
+  pub use ::arrayvec::ArrayVec;
+  pub use ::indexmap::{IndexMap, IndexSet};
   pub use ::rayon::prelude::*;
   pub use ::itertools::*;
   pub use ::parse_display::{FromStr, Display};

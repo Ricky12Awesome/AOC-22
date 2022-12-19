@@ -14,6 +14,7 @@ struct Line {
   beacon_y: isize,
 }
 
+#[derive(Default, Copy, Clone)]
 struct Sensor {
   pos: (isize, isize),
   closest: (isize, isize),
@@ -21,7 +22,7 @@ struct Sensor {
 }
 
 impl Sensor {
-  fn new(line: Line) -> Self {
+  const fn new(line: Line) -> Self {
     Self {
       pos: (line.sensor_x, line.sensor_y),
       closest: (line.beacon_x, line.sensor_y),
@@ -38,13 +39,13 @@ impl Sensor {
   }
 }
 
-fn parse(input: &str) -> Vec<Sensor> {
+fn parse(input: &str) -> ArrayVec<Sensor, 30> {
   input
     .lines()
     .map(str::parse::<Line>)
     .map(Result::unwrap)
     .map(Sensor::new)
-    .collect_vec()
+    .collect()
 }
 
 fn part1(input: &[Sensor], n: isize) -> usize {
