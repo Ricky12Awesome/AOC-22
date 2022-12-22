@@ -1,5 +1,11 @@
-use std::fmt::{Display, Formatter};
-use std::time::{Duration, Instant};
+use itertools::{
+  FoldWhile::{Continue, Done},
+  Itertools,
+};
+use std::{
+  fmt::{Display, Formatter},
+  time::{Duration, Instant},
+};
 
 pub fn parse_u32(str: &str) -> u32 {
   str.parse().unwrap()
@@ -49,4 +55,25 @@ impl Display for Timer {
   fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
     std::fmt::Debug::fmt(&self.0.elapsed(), f)
   }
+}
+
+pub trait CountInclusive: Iterator {
+  fn count_inclusive(&mut self, mut predicate: impl FnMut(Self::Item) -> bool) -> usize
+  where
+    Self: Sized,
+  {
+    self
+      .fold_while(0, |acc, value| {
+        if predicate(value) {
+          Continue(acc + 1)
+        } else {
+          Done(acc + 1)
+        }
+      })
+      .into_inner()
+  }
+}
+
+impl <I: Iterator> CountInclusive for I {
+
 }

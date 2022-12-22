@@ -85,6 +85,7 @@ fn run_day(day: usize, args: &AnyDayArgs) -> anyhow::Result<()> {
     25 => for_day!(day25, day, args),
     _ => anyhow::bail!("not a valid day!"),
   };
+
   Ok(())
 }
 

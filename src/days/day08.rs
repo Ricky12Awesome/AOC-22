@@ -9,7 +9,6 @@ day!(08, Some(1647), Some(392080), |part, input| -> usize {
   answer!(part, p1, p2)
 });
 
-#[allow(clippy::needless_range_loop)]
 fn visible_trees(grid: &Vec<Vec<u8>>) -> (usize, usize) {
   let mut visible_tree_count = 0;
   let mut highest_score = 0;
@@ -18,56 +17,27 @@ fn visible_trees(grid: &Vec<Vec<u8>>) -> (usize, usize) {
     for x in 0..grid[y].len() {
       let value = grid[y][x];
 
-      let is_visible_from_top = (0..y).all(|y| grid[y][x] < value);
-      let is_visible_from_left = (0..x).all(|x| grid[y][x] < value);
-      let is_visible_from_bottom = (y + 1..grid.len()).all(|y| grid[y][x] < value);
-      let is_visible_from_right = (x + 1..grid[y].len()).all(|x| grid[y][x] < value);
+      let trees = [
+        (0..y).all(|y| grid[y][x] < value),
+        (0..x).all(|x| grid[y][x] < value),
+        (y + 1..grid.len()).all(|y| grid[y][x] < value),
+        (x + 1..grid[y].len()).all(|x| grid[y][x] < value),
+      ];
 
-      let [mut top, mut left, mut bottom, mut right] = [0usize; 4];
+      let scores = [
+        (0..y).rev().count_inclusive(|y| grid[y][x] < value),
+        (0..x).rev().count_inclusive(|x| grid[y][x] < value),
+        (y + 1..grid.len()).count_inclusive(|y| grid[y][x] < value),
+        (x + 1..grid[y].len()).count_inclusive(|x| grid[y][x] < value),
+      ];
 
-      for y in (0..y).rev() {
-        top += 1;
-
-        if grid[y][x] >= value {
-          break;
-        }
-      }
-
-      for x in (0..x).rev() {
-        left += 1;
-
-        if grid[y][x] >= value {
-          break;
-        }
-      }
-
-      for y in y + 1..grid.len() {
-        bottom += 1;
-
-        if grid[y][x] >= value {
-          break;
-        }
-      }
-
-      for x in x + 1..grid[y].len() {
-        right += 1;
-
-        if grid[y][x] >= value {
-          break;
-        }
-      }
-
-      let score = top * left * bottom * right;
+      let score = scores.into_iter().product();
 
       if score > highest_score {
         highest_score = score
       }
 
-      if is_visible_from_top
-        || is_visible_from_left
-        || is_visible_from_bottom
-        || is_visible_from_right
-      {
+      if trees.into_iter().any(|is_visible| is_visible) {
         visible_tree_count += 1;
       }
     }
